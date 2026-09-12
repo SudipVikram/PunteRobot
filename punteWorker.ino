@@ -7,6 +7,11 @@ TOF sensor - VL53L0X
 N20 motors - 300rpm
 ===============*/
 
+// Bluetooth
+#include <BluetoothSerial.h>
+
+BluetoothSerial BTSerial;
+
 // I2C pins
 #define SDA_PIN 4
 #define SCL_PIN 15
@@ -64,6 +69,8 @@ void setup(){
 
   digitalWrite(STBY, HIGH);
   Serial.begin(115200);
+
+  BTSerial.begin("PunteRobot"); // Bluetooth device name
 
 
   // setup encoder pins with pullups
@@ -133,4 +140,15 @@ void loop(){
   Serial.print(leftMotorPosition);
   Serial.print(", Right -> ");
   Serial.println(rightMotorPosition);
+
+  // sending serial data via bluetooth
+  static unsigned long t0 = 0;
+  if(millis() - t0 >= 50){
+    t0 = millis();
+
+    BTSerial.print("L:");
+    BTSerial.print(leftMotorPosition);
+    BTSerial.print(", R:");
+    BTSerial.println(rightMotorPosition);
+  }
 }

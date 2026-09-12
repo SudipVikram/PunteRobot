@@ -12,8 +12,8 @@ N20 motors - 300rpm
 #define SCL_PIN 15
 
 // Encoder Pins
-#define ENCODER_LEFT_A 13  // C1 Phase A left motor
-#define ENCODER_LEFT_B 12  // C2 Phase B left motor
+#define ENCODER_LEFT_A 12  // C1 Phase A left motor
+#define ENCODER_LEFT_B 13  // C2 Phase B left motor
 #define ENCODER_RIGHT_A 32 // C1 Phase A right motor
 #define ENCODER_RIGHT_B 33 // C2 Phase B right motor
 
@@ -26,8 +26,32 @@ N20 motors - 300rpm
 #define PWMB 14
 #define STBY 23
 
+
+// Encoder Positions
+volatile long leftMotorPosition = 0;
+volatile long rightMotorPosition = 0;
+
 // Speed of Punte
 const int MOTOR_SPEED = 130;
+
+
+// Interrupt Service Routines for encoders
+void updateLeftMotorPosition(){
+  if(digitalRead(ENCODER_LEFT_B) != digitalRead(ENCODER_LEFT_A)){
+    leftMotorPosition++;
+  }else{
+    leftMotorPosition--;
+  }
+}
+
+void updateRightMotorPosition(){
+  if(digitalRead(ENCODER_RIGHT_B) != digitalRead(ENCODER_RIGHT_A)){
+    rightMotorPosition++;
+  }else{
+    rightMotorPosition--;
+  }
+}
+//----- ISR for Encoders ends -----
 
 void setup(){
   pinMode(MOTOR_LEFT_AIN1, OUTPUT);
@@ -40,10 +64,21 @@ void setup(){
 
   digitalWrite(STBY, HIGH);
   Serial.begin(115200);
+
+
+  // setup encoder pins with pullups
+  pinMode(ENCODER_LEFT_A, INPUT_PULLUP);
+  pinMode(ENCODER_LEFT_B, INPUT_PULLUP);
+  pinMode(ENCODER_RIGHT_A, INPUT_PULLUP);
+  pinMode(ENCODER_RIGHT_B, INPUT_PULLUP);
+
+  // ISR for encoders
+  attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT_A),updateLeftMotorPosition,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT_A),updateRightMotorPosition,CHANGE);
 }
 
-void loop(){
-  // move motor forward
+// move forward
+void moveForward() {
   digitalWrite(MOTOR_LEFT_AIN1, HIGH);
   digitalWrite(MOTOR_LEFT_AIN2, LOW);
   digitalWrite(MOTOR_RIGHT_BIN1, HIGH);
@@ -51,10 +86,10 @@ void loop(){
   analogWrite(PWMA, 150);
   analogWrite(PWMB, 150);
   Serial.println("moving forward");
+}
 
-  delay(2000);
-
-  // move motor backward
+// move backward
+void moveBackward() {
   digitalWrite(MOTOR_LEFT_AIN1, LOW);
   digitalWrite(MOTOR_LEFT_AIN2, HIGH);
   digitalWrite(MOTOR_RIGHT_BIN1, LOW);
@@ -62,13 +97,40 @@ void loop(){
   analogWrite(PWMA, 150);
   analogWrite(PWMB, 150);
   Serial.println("moving backward");
-
-  delay(2000);
-
-  // stop motor
-  Serial.println("SToppING");
-  analogWrite(PWMA, 0);
-  analogWrite(PWMB, 0);
-  delay(2000);
 }
 
+// turn right
+void turnRight() {
+  digitalWrite(MOTOR_LEFT_AIN1, LOW);
+  digitalWrite(MOTOR_LEFT_AIN2, HIGH);
+  digitalWrite(MOTOR_RIGHT_BIN1, HIGH);
+  digitalWrite(MOTOR_RIGHT_BIN2, LOW);
+  analogWrite(PWMA, 150);
+  analogWrite(PWMB, 150);
+  Serial.println("turning right");
+}
+
+// turn left
+void turnLeft() {
+  digitalWrite(MOTOR_LEFT_AIN1, HIGH);
+  digitalWrite(MOTOR_LEFT_AIN2, LOW);
+  digitalWrite(MOTOR_RIGHT_BIN1, LOW);
+  digitalWrite(MOTOR_RIGHT_BIN2, HIGH);
+  analogWrite(PWMA, 150);
+  analogWrite(PWMB, 150);
+  Serial.println("turning left");
+}
+
+// stop
+void stopMotors() {
+  analogWrite(PWMA, 0);
+  analogWrite(PWMB, 0);
+  Serial.println("stopping motors");
+}
+
+void loop(){
+  Serial.print("Left -> ");
+  Serial.print(leftMotorPosition);
+  Serial.print(", Right -> ");
+  Serial.println(rightMotorPosition);
+}

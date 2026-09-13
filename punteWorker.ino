@@ -37,7 +37,7 @@ volatile long leftMotorPosition = 0;
 volatile long rightMotorPosition = 0;
 
 // Speed of Punte
-const int MOTOR_SPEED = 80;
+int MOTOR_SPEED = 80;
 
 
 // Interrupt Service Routines for encoders
@@ -149,7 +149,9 @@ void loop(){
     BTSerial.print("L:");
     BTSerial.print(leftMotorPosition);
     BTSerial.print(", R:");
-    BTSerial.println(rightMotorPosition);
+    BTSerial.print(rightMotorPosition);
+    BTSerial.print(", S:");
+    BTSerial.println(MOTOR_SPEED);
   }
 
   // receive motor commands via bluetooth
@@ -168,6 +170,10 @@ void loop(){
       turnRight();
     }else if(command == "S"){
       stopMotors();
+    }else if(command == "+"){
+      MOTOR_SPEED += 5;
+    }else if(command == "-"){
+      MOTOR_SPEED -= 5;
     }
   }
 }

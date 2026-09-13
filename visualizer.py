@@ -43,14 +43,19 @@ while True:
         try:
             line = data_from_serial.strip() # remove carriage return \n
 
-            if line.startswith("L:") and ", R:" in line:
+            if line.startswith("L:") and (", R:" in line) and (", S:" in line):
+                # split by comma first
+                parts = line.split(", ")
+                
                 # splitting the data step by step
-                l_encoder = line.split(", R:")[0].strip()      # L:12
-                r_encoder = line.split(", R:")[1].strip()      # R:34
+                l_encoder = parts[0].replace("L:","").strip()      # L:12
+                r_encoder = parts[1].replace("R:","").strip()      # R:34
+                s_encoder = parts[2].replace("S:","").strip()      # S:56
 
                 # parse each value
-                left = int(l_encoder.replace("L:",""))
+                left = int(l_encoder)
                 right = int(r_encoder)
+                speed = int(s_encoder)
 
         except Exception:
             print("Bad data packet: ",data_from_serial)
@@ -74,9 +79,9 @@ while True:
     elif canvas.down_pressed:
         current_cmd = "B"
     elif canvas.minus_key_pressed:
-        current_cmd = "M"
+        current_cmd = "-"
     elif canvas.plus_key_pressed:
-        current_cmd = "P"
+        current_cmd = "+"
 
     # display current command on the canvas
     # placeholder for current command
@@ -84,7 +89,11 @@ while True:
     # current command
     canvas.draw_text(text=f"Cmd: {current_cmd}",font_size=16,color=(0,0,0),xpos=1155,ypos=105)
 
-    
+    # placeholder for motor speed and direction
+    canvas.draw_rect(color="lightgreen",org=(1150,150),width=150,height=75,border_thickness=0,border_radius=10)
+    canvas.draw_text(text="Speed & Direction",font_size=16,color=(0,0,0),xpos=1155,ypos=160)
+    canvas.draw_text(text=f"Speed: {speed}",font_size=16,color=(84,84,84),xpos=1155,ypos=180)
+    canvas.draw_text(text=f"Dir: ",font_size=16,color=(84,84,84),xpos=1155,ypos=200)
 
     # sending command to esp32
     odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))

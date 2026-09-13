@@ -73,12 +73,18 @@ while True:
         current_cmd = "F"
     elif canvas.down_pressed:
         current_cmd = "B"
+    elif canvas.minus_key_pressed:
+        current_cmd = "M"
+    elif canvas.plus_key_pressed:
+        current_cmd = "P"
 
     # display current command on the canvas
     # placeholder for current command
     canvas.draw_rect(color="yellow",org=(1150,95),width=150,height=45,border_thickness=0,border_radius=10)    
     # current command
     canvas.draw_text(text=f"Cmd: {current_cmd}",font_size=16,color=(0,0,0),xpos=1155,ypos=105)
+
+    
 
     # sending command to esp32
     odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))

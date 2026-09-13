@@ -171,9 +171,13 @@ void loop(){
     }else if(command == "S"){
       stopMotors();
     }else if(command == "+"){
-      MOTOR_SPEED += 5;
+      if(MOTOR_SPEED<=250){
+        MOTOR_SPEED += 5;
+      }
     }else if(command == "-"){
-      MOTOR_SPEED -= 5;
+      if(MOTOR_SPEED>=35){
+        MOTOR_SPEED -= 5;
+      }
     }
   }
 }

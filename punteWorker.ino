@@ -37,7 +37,7 @@ volatile long leftMotorPosition = 0;
 volatile long rightMotorPosition = 0;
 
 // Speed of Punte
-const int MOTOR_SPEED = 130;
+const int MOTOR_SPEED = 80;
 
 
 // Interrupt Service Routines for encoders

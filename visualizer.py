@@ -46,7 +46,7 @@ while True:
             if line.startswith("L:") and ", R:" in line:
                 # splitting the data step by step
                 l_encoder = line.split(", R:")[0].strip()      # L:12
-                r_encoder = line.split(", R:")[1].strip()      # 34
+                r_encoder = line.split(", R:")[1].strip()      # R:34
 
                 # parse each value
                 left = int(l_encoder.replace("L:",""))
@@ -59,6 +59,22 @@ while True:
     canvas.draw_text(text="Encoder Data",font_size=16,color=(0,0,0),xpos=1155,ypos=15)
     canvas.draw_text(text=f"Left: {left}",font_size=16,color=(84,84,84),xpos=1155,ypos=35)
     canvas.draw_text(text=f"Right: {right}",font_size=16,color=(84,84,84),xpos=1155,ypos=55)
+
+    #==========
+    # KEY STROKES
+    #==========
+    current_cmd = "S"   # stopping is the default command unless another key is pressed
+
+    if canvas.left_pressed:
+        current_cmd = "L"
+    elif canvas.right_pressed:
+        current_cmd = "R"
+    elif canvas.up_pressed:
+        current_cmd = "F"
+    elif canvas.down_pressed:
+        current_cmd = "B"
+
+    odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))
 
     # fps
     canvas.set_fps(60)

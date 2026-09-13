@@ -90,8 +90,8 @@ void moveForward() {
   digitalWrite(MOTOR_LEFT_AIN2, LOW);
   digitalWrite(MOTOR_RIGHT_BIN1, HIGH);
   digitalWrite(MOTOR_RIGHT_BIN2, LOW);
-  analogWrite(PWMA, 150);
-  analogWrite(PWMB, 150);
+  analogWrite(PWMA, MOTOR_SPEED);
+  analogWrite(PWMB, MOTOR_SPEED);
   Serial.println("moving forward");
 }
 
@@ -101,8 +101,8 @@ void moveBackward() {
   digitalWrite(MOTOR_LEFT_AIN2, HIGH);
   digitalWrite(MOTOR_RIGHT_BIN1, LOW);
   digitalWrite(MOTOR_RIGHT_BIN2, HIGH);
-  analogWrite(PWMA, 150);
-  analogWrite(PWMB, 150);
+  analogWrite(PWMA, MOTOR_SPEED);
+  analogWrite(PWMB, MOTOR_SPEED);
   Serial.println("moving backward");
 }
 
@@ -112,8 +112,8 @@ void turnRight() {
   digitalWrite(MOTOR_LEFT_AIN2, HIGH);
   digitalWrite(MOTOR_RIGHT_BIN1, HIGH);
   digitalWrite(MOTOR_RIGHT_BIN2, LOW);
-  analogWrite(PWMA, 150);
-  analogWrite(PWMB, 150);
+  analogWrite(PWMA, MOTOR_SPEED);
+  analogWrite(PWMB, MOTOR_SPEED);
   Serial.println("turning right");
 }
 
@@ -123,8 +123,8 @@ void turnLeft() {
   digitalWrite(MOTOR_LEFT_AIN2, LOW);
   digitalWrite(MOTOR_RIGHT_BIN1, LOW);
   digitalWrite(MOTOR_RIGHT_BIN2, HIGH);
-  analogWrite(PWMA, 150);
-  analogWrite(PWMB, 150);
+  analogWrite(PWMA, MOTOR_SPEED);
+  analogWrite(PWMB, MOTOR_SPEED);
   Serial.println("turning left");
 }
 
@@ -150,5 +150,24 @@ void loop(){
     BTSerial.print(leftMotorPosition);
     BTSerial.print(", R:");
     BTSerial.println(rightMotorPosition);
+  }
+
+  // receive motor commands via bluetooth
+  if(BTSerial.available()){
+    String command = BTSerial.readStringUntil('\n');
+    command.trim();
+
+    // moving the motor according to the received command
+    if(command == "F"){
+      moveForward();
+    }else if(command == "B"){
+      moveBackward();
+    }else if(command == "L"){
+      turnLeft();
+    }else if(command == "R"){
+      turnRight();
+    }else if(command == "S"){
+      stopMotors();
+    }
   }
 }

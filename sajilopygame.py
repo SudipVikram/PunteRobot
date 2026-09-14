@@ -1099,6 +1099,37 @@ class sajilopygame:
                     if ypos is not None:
                         self.ypos = ypos
 
+        # function used to rotate the robot according to its heading
+        def draw_rotated_rect(self, cx, cy, width, height, angle_deg, color="red",border_thickness=0):
+            """
+            cx, cy  = center of the robot on screen
+            width, height = size of the robot
+            angle_deg = heading in degrees
+            """
+            angle = math.radians(angle_deg)
+
+            # Half sizes
+            hw = width / 2
+            hh = height / 2
+
+            # Four corners relative to center (before rotation)
+            corners = [
+                (-hw, -hh),
+                ( hw, -hh),
+                ( hw,  hh),
+                (-hw,  hh)
+            ]
+
+            # Rotate and translate each corner
+            rotated = []
+            for x, y in corners:
+                rx = x * math.cos(angle) - y * math.sin(angle)
+                ry = x * math.sin(angle) + y * math.cos(angle)
+                rotated.append((cx + rx, cy + ry))
+
+            # Draw the rotated rectangle
+            self.parent.draw_polygon(color=color, points=rotated, border_thickness=border_thickness)
+
         def update_shape(self, width=None, height=None):
             self.check_vitals()
             if width is not None:

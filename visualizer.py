@@ -44,37 +44,6 @@ prev_left = 0
 prev_right = 0
 #======================================
 
-# function used to rotate the robot according to its heading
-def draw_rotated_robot(canvas, cx, cy, width, height, angle_deg, color="red"):
-    """
-    cx, cy  = center of the robot on screen
-    width, height = size of the robot
-    angle_deg = heading in degrees
-    """
-    angle = math.radians(angle_deg)
-
-    # Half sizes
-    hw = width / 2
-    hh = height / 2
-
-    # Four corners relative to center (before rotation)
-    corners = [
-        (-hw, -hh),
-        ( hw, -hh),
-        ( hw,  hh),
-        (-hw,  hh)
-    ]
-
-    # Rotate and translate each corner
-    rotated = []
-    for x, y in corners:
-        rx = x * math.cos(angle) - y * math.sin(angle)
-        ry = x * math.sin(angle) + y * math.cos(angle)
-        rotated.append((cx + rx, cy + ry))
-
-    # Draw the rotated rectangle
-    canvas.draw_polygon(color=color, points=rotated, border_thickness=0)
-
 # distance travelled
 distance_travelled = 0.0
 
@@ -194,13 +163,7 @@ while True:
     #robot.update_position(xpos=screen_x-(robot_world_width//2), ypos=screen_y-(robot_world_height//2))
 
     # Draw rotated robot
-    draw_rotated_robot(canvas, 
-                    cx=screen_x, 
-                    cy=screen_y, 
-                    width=robot_world_width, 
-                    height=robot_world_height, 
-                    angle_deg=-heading,
-                    color="red")
+    robot.draw_rotated_rect(cx=screen_x, cy=screen_y, width=robot_world_width, height=robot_world_height, angle_deg=-heading, color="red", border_thickness=0)
 
     # loading the robot
     robot.load()
@@ -263,9 +226,7 @@ while True:
     canvas.draw_text(text=f"Distance: {distance_travelled:.2f}m",font_size=16,color=(84, 84, 84),xpos=1155,ypos=255)
     canvas.draw_text(text=f"Heading: {int(heading)}°",font_size=16,color=(84, 84, 84),xpos=1155,ypos=275)
 
-
-
-    # sending command to esp32
+    # sending command to esp32(punte)
     odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))
 
     # fps

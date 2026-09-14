@@ -58,6 +58,23 @@ while True:
     for j in range(0, canvas.wheight, 150):
         canvas.draw_line(start=(0,j),end=(canvas.wwidth,j),color="lightgray",width=1)
 
+    #===========
+    # NUMBERING
+    #===========
+    f_size = 40
+    counter = 1
+
+    # outer loop controls vertical position (starting at y=645 and going up)
+    for j in range(635, 0, -145):
+        # inner loop controls horizontal position (150-pixel steps)
+        for i in range(150, canvas.wwidth + 150, 150):
+            if counter <= 45:
+                # draw the current number
+                canvas.draw_text(text=str(counter),font_size=f_size,color=(237, 237, 237),xpos=(i - 75 - (f_size // 2)),ypos=j)
+                counter += 1
+            else:
+                break  # Stop once we reach 45
+
     #=========
     # ODOMETRY DATA
     #=========
@@ -122,9 +139,6 @@ while True:
     canvas.draw_text(text=f"Speed: {speed}",font_size=16,color=(84,84,84),xpos=1155,ypos=175)
     canvas.draw_text(text=f"Dir: ",font_size=16,color=(84,84,84),xpos=1155,ypos=195)
 
-    # sending command to esp32
-    odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))
-
     # title
     canvas.draw_text(text="Punte Robot Visualizer", font_size=20, color=(40,40,80),xpos=10,ypos=10)
 
@@ -176,7 +190,7 @@ while True:
     # update robot character position
     robot.update_position(xpos=screen_x-(robot_world_width//2), ypos=screen_y-(robot_world_height//2))
 
-   # loading the robot
+    # loading the robot
     robot.load()
     #========================================================
 
@@ -187,6 +201,9 @@ while True:
     canvas.draw_text(text="Distance & Heading",font_size=16,color=(0,0,0),xpos=1155,ypos=235)
     canvas.draw_text(text=f"Distance: {int(distance)}",font_size=16,color=(84, 84, 84),xpos=1155,ypos=255)
     canvas.draw_text(text=f"Heading: {int(heading)}°",font_size=16,color=(84, 84, 84),xpos=1155,ypos=275)
+
+    # sending command to esp32
+    odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))
 
     # fps
     canvas.set_fps(60)

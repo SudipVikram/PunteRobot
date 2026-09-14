@@ -184,6 +184,8 @@ while True:
         current_cmd = "-"
     elif canvas.plus_key_pressed:
         current_cmd = "+"
+    elif canvas.d_key_pressed:
+        canvas.draw_line(start=(canvas.wwidth//2,canvas.wheight//2),end=(screen_x,screen_y),color="black",width=1)
 
     # encoder data
     canvas.draw_text(text="Encoder Data",font_size=16,color=(0,0,0),xpos=1155,ypos=15)

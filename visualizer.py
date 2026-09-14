@@ -7,6 +7,7 @@ Tasks - visualization, mapping, sensing and data processing
 
 from sajilopygame import * # used for all tasks related to visualization
 from sajilocv import *  # used for serial communication
+import math
 
 # instantiating classes
 canvas = sajilopygame(wwidth=1350, wheight=750)
@@ -42,6 +43,37 @@ WHEEL_BASE = 0.118       # wheel to wheel distance = 118mm = 0.118m
 prev_left = 0
 prev_right = 0
 #======================================
+
+# function used to rotate the robot according to its heading
+def draw_rotated_robot(canvas, cx, cy, width, height, angle_deg, color="red"):
+    """
+    cx, cy  = center of the robot on screen
+    width, height = size of the robot
+    angle_deg = heading in degrees
+    """
+    angle = math.radians(angle_deg)
+
+    # Half sizes
+    hw = width / 2
+    hh = height / 2
+
+    # Four corners relative to center (before rotation)
+    corners = [
+        (-hw, -hh),
+        ( hw, -hh),
+        ( hw,  hh),
+        (-hw,  hh)
+    ]
+
+    # Rotate and translate each corner
+    rotated = []
+    for x, y in corners:
+        rx = x * math.cos(angle) - y * math.sin(angle)
+        ry = x * math.sin(angle) + y * math.cos(angle)
+        rotated.append((cx + rx, cy + ry))
+
+    # Draw the rotated rectangle
+    canvas.draw_polygon(color=color, points=rotated, border_thickness=0)
 
 while True:
     # canvas background
@@ -153,11 +185,24 @@ while True:
     screen_y = 375 - int(world_y * scale)
 
     # update robot character position
-    robot.update_position(xpos=screen_x-(robot_world_width//2), ypos=screen_y-(robot_world_height//2))
+    #robot.update_position(xpos=screen_x-(robot_world_width//2), ypos=screen_y-(robot_world_height//2))
+
+    # Draw rotated robot
+    draw_rotated_robot(canvas, 
+                    cx=screen_x, 
+                    cy=screen_y, 
+                    width=robot_world_width, 
+                    height=robot_world_height, 
+                    angle_deg=-heading,
+                    color="red")
 
     # loading the robot
     robot.load()
     #========================================================
+
+    #====================
+    # Heading and Distance Calculation
+    #====================
 
     #==========
     # KEY STROKES

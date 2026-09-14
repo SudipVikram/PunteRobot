@@ -117,10 +117,10 @@ while True:
     canvas.draw_text(text=f"Cmd: {current_cmd}",font_size=16,color=(0,0,0),xpos=1155,ypos=105)
 
     # placeholder for motor speed and direction
-    canvas.draw_rect(color="lightgreen",org=(1150,150),width=150,height=75,border_thickness=0,border_radius=10)
-    canvas.draw_text(text="Speed & Direction",font_size=16,color=(0,0,0),xpos=1155,ypos=160)
-    canvas.draw_text(text=f"Speed: {speed}",font_size=16,color=(84,84,84),xpos=1155,ypos=180)
-    canvas.draw_text(text=f"Dir: ",font_size=16,color=(84,84,84),xpos=1155,ypos=200)
+    canvas.draw_rect(color="lightgreen",org=(1150,150),width=150,height=70,border_thickness=0,border_radius=10)
+    canvas.draw_text(text="Speed & Direction",font_size=16,color=(0,0,0),xpos=1155,ypos=155)
+    canvas.draw_text(text=f"Speed: {speed}",font_size=16,color=(84,84,84),xpos=1155,ypos=175)
+    canvas.draw_text(text=f"Dir: ",font_size=16,color=(84,84,84),xpos=1155,ypos=195)
 
     # sending command to esp32
     odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))
@@ -154,8 +154,8 @@ while True:
     heading = heading % 360
 
     # updating the robot's world position
-    world_x += distance * math.cos(delta_theta)
-    world_y += distance * math.sin(delta_theta)
+    world_x += distance * math.cos(math.radians(heading))
+    world_y += distance * math.sin(math.radians(heading))
 
     # save current encoder values for the next loop
     prev_left = left_enc
@@ -180,6 +180,13 @@ while True:
     robot.load()
     #========================================================
 
+    #===========================
+    # Heading and distance card
+    #===========================
+    canvas.draw_rect(color="orange",org=(1150,230),width=150,height=75,border_thickness=0,border_radius=10)
+    canvas.draw_text(text="Distance & Heading",font_size=16,color=(0,0,0),xpos=1155,ypos=235)
+    canvas.draw_text(text=f"Distance: {int(distance)}",font_size=16,color=(84, 84, 84),xpos=1155,ypos=255)
+    canvas.draw_text(text=f"Heading: {int(heading)}°",font_size=16,color=(84, 84, 84),xpos=1155,ypos=275)
 
     # fps
     canvas.set_fps(60)

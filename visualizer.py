@@ -46,6 +46,7 @@ prev_right = 0
 
 # distance travelled
 distance_travelled = 0.0
+straight_distance = 0.0
 
 while True:
     # canvas background
@@ -182,6 +183,8 @@ while True:
         # covers 315–360 and 0–45
         direction = "RIGHT"
 
+    straight_distance = math.sqrt(world_x**2 + world_y**2)
+
 
     #==========
     # KEY STROKES
@@ -221,10 +224,11 @@ while True:
     #===========================
     # Heading and distance card
     #===========================
-    canvas.draw_rect(color="orange",org=(1150,230),width=150,height=75,border_thickness=0,border_radius=10)
+    canvas.draw_rect(color="orange",org=(1150,230),width=150,height=95,border_thickness=0,border_radius=10)
     canvas.draw_text(text="Distance & Heading",font_size=16,color=(0,0,0),xpos=1155,ypos=235)
-    canvas.draw_text(text=f"Distance: {distance_travelled:.2f}m",font_size=16,color=(84, 84, 84),xpos=1155,ypos=255)
-    canvas.draw_text(text=f"Heading: {int(heading)}°",font_size=16,color=(84, 84, 84),xpos=1155,ypos=275)
+    canvas.draw_text(text=f"Travelled: {distance_travelled:.2f}m",font_size=16,color=(84, 84, 84),xpos=1155,ypos=255)
+    canvas.draw_text(text=f"From Start: {straight_distance:.2f}m",font_size=16,color=(84, 84, 84),xpos=1155,ypos=275)
+    canvas.draw_text(text=f"Heading: {int(heading)}°",font_size=16,color=(84, 84, 84),xpos=1155,ypos=295)
 
     # sending command to esp32(punte)
     odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))

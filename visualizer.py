@@ -36,7 +36,7 @@ heading = 90.0  # degrees (90 = facing up)
 # ticks per meter - 6552 (single channel)
 # constants
 TICKS_PER_METER = 6552 # for a single channel encoder
-WHEEL_BASE = 118       # wheel to wheel distance = 118mm = 0.118m
+WHEEL_BASE = 0.118       # wheel to wheel distance = 118mm = 0.118m
 
 # previous encoder values
 prev_left = 0
@@ -104,41 +104,6 @@ while True:
         except Exception:
             print("Bad data packet: ",data_from_serial)
 
-    # encoder data
-    canvas.draw_text(text="Encoder Data",font_size=16,color=(0,0,0),xpos=1155,ypos=15)
-    canvas.draw_text(text=f"Left: {left_enc}",font_size=16,color=(84,84,84),xpos=1155,ypos=35)
-    canvas.draw_text(text=f"Right: {right_enc}",font_size=16,color=(84,84,84),xpos=1155,ypos=55)
-
-    #==========
-    # KEY STROKES
-    #==========
-    current_cmd = "S"   # stopping is the default command unless another key is pressed
-
-    if canvas.left_pressed:
-        current_cmd = "L"
-    elif canvas.right_pressed:
-        current_cmd = "R"
-    elif canvas.up_pressed:
-        current_cmd = "F"
-    elif canvas.down_pressed:
-        current_cmd = "B"
-    elif canvas.minus_key_pressed:
-        current_cmd = "-"
-    elif canvas.plus_key_pressed:
-        current_cmd = "+"
-
-    # display current command on the canvas
-    # placeholder for current command
-    canvas.draw_rect(color="yellow",org=(1150,95),width=150,height=45,border_thickness=0,border_radius=10)    
-    # current command
-    canvas.draw_text(text=f"Cmd: {current_cmd}",font_size=16,color=(0,0,0),xpos=1155,ypos=105)
-
-    # placeholder for motor speed and direction
-    canvas.draw_rect(color="lightgreen",org=(1150,150),width=150,height=70,border_thickness=0,border_radius=10)
-    canvas.draw_text(text="Speed & Direction",font_size=16,color=(0,0,0),xpos=1155,ypos=155)
-    canvas.draw_text(text=f"Speed: {speed}",font_size=16,color=(84,84,84),xpos=1155,ypos=175)
-    canvas.draw_text(text=f"Dir: ",font_size=16,color=(84,84,84),xpos=1155,ypos=195)
-
     # title
     canvas.draw_text(text="Punte Robot Visualizer", font_size=20, color=(40,40,80),xpos=10,ypos=10)
 
@@ -194,6 +159,41 @@ while True:
     robot.load()
     #========================================================
 
+    #==========
+    # KEY STROKES
+    #==========
+    current_cmd = "S"   # stopping is the default command unless another key is pressed
+
+    if canvas.left_pressed:
+        current_cmd = "L"
+    elif canvas.right_pressed:
+        current_cmd = "R"
+    elif canvas.up_pressed:
+        current_cmd = "F"
+    elif canvas.down_pressed:
+        current_cmd = "B"
+    elif canvas.minus_key_pressed:
+        current_cmd = "-"
+    elif canvas.plus_key_pressed:
+        current_cmd = "+"
+
+    # encoder data
+    canvas.draw_text(text="Encoder Data",font_size=16,color=(0,0,0),xpos=1155,ypos=15)
+    canvas.draw_text(text=f"Left: {left_enc}",font_size=16,color=(84,84,84),xpos=1155,ypos=35)
+    canvas.draw_text(text=f"Right: {right_enc}",font_size=16,color=(84,84,84),xpos=1155,ypos=55)
+
+    # display current command on the canvas
+    # placeholder for current command
+    canvas.draw_rect(color="yellow",org=(1150,95),width=150,height=45,border_thickness=0,border_radius=10)    
+    # current command
+    canvas.draw_text(text=f"Cmd: {current_cmd}",font_size=16,color=(0,0,0),xpos=1155,ypos=105)
+
+    # placeholder for motor speed and direction
+    canvas.draw_rect(color="lightgreen",org=(1150,150),width=150,height=70,border_thickness=0,border_radius=10)
+    canvas.draw_text(text="Speed & Direction",font_size=16,color=(0,0,0),xpos=1155,ypos=155)
+    canvas.draw_text(text=f"Motor Speed: {speed}",font_size=16,color=(84,84,84),xpos=1155,ypos=175)
+    canvas.draw_text(text=f"Dir: ",font_size=16,color=(84,84,84),xpos=1155,ypos=195)
+
     #===========================
     # Heading and distance card
     #===========================
@@ -201,6 +201,8 @@ while True:
     canvas.draw_text(text="Distance & Heading",font_size=16,color=(0,0,0),xpos=1155,ypos=235)
     canvas.draw_text(text=f"Distance: {int(distance)}",font_size=16,color=(84, 84, 84),xpos=1155,ypos=255)
     canvas.draw_text(text=f"Heading: {int(heading)}°",font_size=16,color=(84, 84, 84),xpos=1155,ypos=275)
+
+
 
     # sending command to esp32
     odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))

@@ -75,6 +75,9 @@ def draw_rotated_robot(canvas, cx, cy, width, height, angle_deg, color="red"):
     # Draw the rotated rectangle
     canvas.draw_polygon(color=color, points=rotated, border_thickness=0)
 
+# distance travelled
+distance_travelled = 0.0
+
 while True:
     # canvas background
     canvas.background_color("white")
@@ -154,6 +157,9 @@ while True:
 
     # distance the robot center moved forward
     distance = (distance_left + distance_right) / 2.0
+
+    # saving the total distance travelled
+    distance_travelled += abs(distance)
 
     # how much the robot turned(in radians)
     delta_theta = (distance_right - distance_left) / WHEEL_BASE
@@ -254,7 +260,7 @@ while True:
     #===========================
     canvas.draw_rect(color="orange",org=(1150,230),width=150,height=75,border_thickness=0,border_radius=10)
     canvas.draw_text(text="Distance & Heading",font_size=16,color=(0,0,0),xpos=1155,ypos=235)
-    canvas.draw_text(text=f"Distance: {int(distance)}",font_size=16,color=(84, 84, 84),xpos=1155,ypos=255)
+    canvas.draw_text(text=f"Distance: {distance_travelled:.2f}m",font_size=16,color=(84, 84, 84),xpos=1155,ypos=255)
     canvas.draw_text(text=f"Heading: {int(heading)}°",font_size=16,color=(84, 84, 84),xpos=1155,ypos=275)
 
 

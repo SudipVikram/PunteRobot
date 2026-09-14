@@ -14,7 +14,34 @@ serialData = sajilocv()
 odometry_data = serialData.ucontroller(serialData,port='COM7',baudrate=115200,timeout=1)
 
 # window title
-canvas.window_title("Punte Robot - Visualizer")
+canvas.window_title("Odometry Visualizer")
+
+# robot character
+# actual width of the robot{l: 0.1m, b: 0.1m}
+# since 1m = 150px, in visualizer l = 0.1*150 = 15px, b = 0.1*150 = 15px
+robot_world_width = 15
+robot_world_height = 15
+robot = canvas.character(parent=canvas,type="shape",character_shape="rectangle",
+                         color="red",org=(0,canvas.wheight),width=robot_world_width,height=robot_world_height,
+                         border_thickness=0,border_radius=0)
+
+
+#========= ODOMETRY SETUP ==========
+# world coordinates
+world_x = 0.0   # meters (right = positive)
+world_y = 0.0   # meters (up/forward = positive)
+heading = 90.0  # degrees (90 = facing up)
+
+# calibrated value with practical data
+# ticks per meter - 6552 (single channel)
+# constants
+TICKS_PER_METER = 6552 # for a single channel encoder
+WHEEL_BASE = 118       # wheel to wheel distance = 118mm = 0.118m
+
+# previous encoder values
+prev_left = 0
+prev_right = 0
+#======================================
 
 while True:
     # canvas background
@@ -53,8 +80,8 @@ while True:
                 s_encoder = parts[2].replace("S:","").strip()      # S:56
 
                 # parse each value
-                left = int(l_encoder)
-                right = int(r_encoder)
+                left_enc = int(l_encoder)
+                right_enc = int(r_encoder)
                 speed = int(s_encoder)
 
         except Exception:
@@ -62,8 +89,8 @@ while True:
 
     # encoder data
     canvas.draw_text(text="Encoder Data",font_size=16,color=(0,0,0),xpos=1155,ypos=15)
-    canvas.draw_text(text=f"Left: {left}",font_size=16,color=(84,84,84),xpos=1155,ypos=35)
-    canvas.draw_text(text=f"Right: {right}",font_size=16,color=(84,84,84),xpos=1155,ypos=55)
+    canvas.draw_text(text=f"Left: {left_enc}",font_size=16,color=(84,84,84),xpos=1155,ypos=35)
+    canvas.draw_text(text=f"Right: {right_enc}",font_size=16,color=(84,84,84),xpos=1155,ypos=55)
 
     #==========
     # KEY STROKES
@@ -100,6 +127,59 @@ while True:
 
     # title
     canvas.draw_text(text="Punte Robot Visualizer", font_size=20, color=(40,40,80),xpos=10,ypos=10)
+
+    #========= ODOMETRY CALCULATIONS =========
+    # wheel diameter = 34mm = 0.034m
+    # wheel circumference = pi * diameter = 0.034 * 3.14159 = 0.1068m
+    # wheel to wheel distance = 118mm = 0.118m
+    # how many ticks since last update
+    delta_left = left_enc - prev_left
+    delta_right = right_enc - prev_right
+
+    # convert ticks to distance
+    # ticks per meter - 6552 (single channel)
+    distance_left = delta_left / TICKS_PER_METER
+    distance_right = delta_right / TICKS_PER_METER
+
+    # distance the robot center moved forward
+    distance = (distance_left + distance_right) / 2.0
+
+    # how much the robot turned(in radians)
+    delta_theta = (distance_right - distance_left) / WHEEL_BASE
+
+    # update heading(convert to degrees)
+    heading += delta_theta * (180.0 / math.pi)
+
+    # keeping the values between 0 - 360
+    heading = heading % 360
+
+    # updating the robot's world position
+    world_x += distance * math.cos(delta_theta)
+    world_y += distance * math.sin(delta_theta)
+
+    # save current encoder values for the next loop
+    prev_left = left_enc
+    prev_right = right_enc
+
+    #==========================================
+
+    # updating the robot position based on odometry data
+    # assuming the robot starts at the center of the canvas
+    # ideal robot start position in the canvas
+    #robot.update_position(xpos=canvas.wwidth//2 - robot_world_width//2,ypos=canvas.wheight//2 - robot_world_height//2)
+    # actual robot position based on odometry data
+    #========= DRAWING ROBOT AT CALCULATED POSITION =========
+    scale = 150     # 150px = 1m (same as the grid in visualizer)
+    screen_x = 675 + int(world_x * scale)
+    screen_y = 375 - int(world_y * scale)
+
+    # update robot character position
+    robot.update_position(xpos=screen_x-(robot_world_width//2), ypos=screen_y-(robot_world_height//2))
+
+   # loading the robot
+    robot.load()
+    #========================================================
+
 
     # fps
     canvas.set_fps(60)

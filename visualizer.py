@@ -203,6 +203,16 @@ while True:
     #====================
     # Heading and Distance Calculation
     #====================
+    if 45 <= heading < 135:
+        direction = "UP"
+    elif 135 <= heading < 225:
+        direction = "LEFT"
+    elif 225 <= heading < 315:
+        direction = "DOWN"
+    else:
+        # covers 315–360 and 0–45
+        direction = "RIGHT"
+
 
     #==========
     # KEY STROKES
@@ -237,7 +247,7 @@ while True:
     canvas.draw_rect(color="lightgreen",org=(1150,150),width=150,height=70,border_thickness=0,border_radius=10)
     canvas.draw_text(text="Speed & Direction",font_size=16,color=(0,0,0),xpos=1155,ypos=155)
     canvas.draw_text(text=f"Motor Speed: {speed}",font_size=16,color=(84,84,84),xpos=1155,ypos=175)
-    canvas.draw_text(text=f"Dir: ",font_size=16,color=(84,84,84),xpos=1155,ypos=195)
+    canvas.draw_text(text=f"Dir: {direction}",font_size=16,color=(84,84,84),xpos=1155,ypos=195)
 
     #===========================
     # Heading and distance card

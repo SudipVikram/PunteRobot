@@ -258,16 +258,38 @@ class sajilopygame:
         self.bg_width, self.bg_height = self.background.get_size()
         self.screen.blit(self.background,(0,0))
 
-    # creating a grid on the yside of the window(column)
-    def gridY(self,ygridsize=150,width=1,color="lightgray"):
+    # creating a grid on the x-y sides of the window
+    def grid(self,xgridsize=150,ygridsize=150,width=1,color="lightgray"):
         for i in range(0, self.wwidth, ygridsize):
             self.draw_line(start=(i,0),end=(i,self.wheight),color=color,width=1)
-
-    # creating a grid on the xside of the window    
-    def gridX(self,xgridsize=150,width=1,color="lightgray"):
         for j in range(0, self.wheight, xgridsize):
             self.draw_line(start=(0,j),end=(self.wwidth,j),color=color,width=1)
+
+    # creating a snake pattern
+    def snake_pattern(self,f_size=40,counter=1,cols=9,row=0,color=(237,237,237)):
     
+        for j in range(635, 0, -145):          # going upward
+            if row % 2 == 0:
+                # even row → left to right
+                for i in range(150, self.wwidth + 150, 150):
+                    if counter <= 45:
+                        self.draw_text(text=str(counter),
+                                        font_size=f_size,
+                                        color=color,
+                                        xpos=(i - 75 - (f_size // 2)),
+                                        ypos=j)
+                        counter += 1
+            else:
+                # odd row → right to left
+                for i in range(self.wwidth, 0, -150):
+                    if counter <= 45:
+                        self.draw_text(text=str(counter),
+                                        font_size=f_size,
+                                        color=color,
+                                        xpos=(i - 75 - (f_size // 2)),
+                                        ypos=j)
+                        counter += 1
+            row += 1
 
     # creating a player
     def create_player(self,image_path,org=(370,480)):

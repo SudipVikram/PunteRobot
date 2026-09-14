@@ -53,26 +53,10 @@ while True:
     canvas.background_color("white")
 
     # grid
-    canvas.gridX()   # with default grid sizes
-    canvas.gridY()
+    canvas.grid()   # with default grid sizes
     
-    
-    #===========
-    # NUMBERING
-    #===========
-    f_size = 40
-    counter = 1
-
-    # outer loop controls vertical position (starting at y=645 and going up)
-    for j in range(635, 0, -145):
-        # inner loop controls horizontal position (150-pixel steps)
-        for i in range(150, canvas.wwidth + 150, 150):
-            if counter <= 45:
-                # draw the current number
-                canvas.draw_text(text=str(counter),font_size=f_size,color=(237, 237, 237),xpos=(i - 75 - (f_size // 2)),ypos=j)
-                counter += 1
-            else:
-                break  # Stop once we reach 45
+    # numbering the grid
+    canvas.snake_pattern()
 
     #=========
     # ODOMETRY DATA

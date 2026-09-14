@@ -52,17 +52,11 @@ while True:
     # canvas background
     canvas.background_color("white")
 
-    #========
-    # GRID
-    #========
-    # columns
-    for i in range(0, canvas.wwidth, 150):
-        canvas.draw_line(start=(i,0),end=(i,canvas.wheight),color="lightgray",width=1)
-
-    # rows
-    for j in range(0, canvas.wheight, 150):
-        canvas.draw_line(start=(0,j),end=(canvas.wwidth,j),color="lightgray",width=1)
-
+    # grid
+    canvas.gridX()   # with default grid sizes
+    canvas.gridY()
+    
+    
     #===========
     # NUMBERING
     #===========

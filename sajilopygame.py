@@ -258,6 +258,17 @@ class sajilopygame:
         self.bg_width, self.bg_height = self.background.get_size()
         self.screen.blit(self.background,(0,0))
 
+    # creating a grid on the yside of the window(column)
+    def gridY(self,ygridsize=150,width=1,color="lightgray"):
+        for i in range(0, self.wwidth, ygridsize):
+            self.draw_line(start=(i,0),end=(i,self.wheight),color=color,width=1)
+
+    # creating a grid on the xside of the window    
+    def gridX(self,xgridsize=150,width=1,color="lightgray"):
+        for j in range(0, self.wheight, xgridsize):
+            self.draw_line(start=(0,j),end=(self.wwidth,j),color=color,width=1)
+    
+
     # creating a player
     def create_player(self,image_path,org=(370,480)):
         self.player_image_path = image_path

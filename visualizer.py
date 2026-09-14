@@ -58,6 +58,9 @@ while True:
     # numbering the grid
     canvas.snake_pattern()
 
+    # crosshair in the origin
+    canvas.draw_text(text="+",font_size=20,color="blue",xpos=(canvas.wwidth//2)-8,ypos=(canvas.wheight//2)-15)
+
     #=========
     # ODOMETRY DATA
     #=========

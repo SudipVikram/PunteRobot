@@ -59,7 +59,7 @@ while True:
     canvas.snake_pattern()
 
     # crosshair in the origin
-    canvas.draw_text(text="+",font_size=20,color="blue",xpos=(canvas.wwidth//2)-8,ypos=(canvas.wheight//2)-15)
+    canvas.draw_text(text="+",font_size=20,color="blue",xpos=(canvas.wwidth//2)-3,ypos=(canvas.wheight//2)-17)
 
     #=========
     # ODOMETRY DATA
@@ -180,11 +180,11 @@ while True:
         current_cmd = "F"
     elif canvas.down_pressed:
         current_cmd = "B"
-    elif canvas.minus_key_pressed:
+    elif canvas.minus_key_pressed:  # slow motor speed by 5
         current_cmd = "-"
-    elif canvas.plus_key_pressed:
+    elif canvas.plus_key_pressed:   # increase motor speed by 5
         current_cmd = "+"
-    elif canvas.d_key_pressed:
+    elif canvas.d_key_pressed:      # draws a line from origin to center of robot
         canvas.draw_line(start=(canvas.wwidth//2,canvas.wheight//2),end=(screen_x,screen_y),color="black",width=1)
 
     # encoder data

@@ -51,6 +51,7 @@ straight_distance = 0.0
 # PATH TRACKING
 #=================
 path_points = []    # list of (world_x, world_y) in meters
+path_on_screen = []     # list of (screen_x, world_y) in pixels
 MIN_DISTANCE_BETWEEN_POINTS = 0.03  # 3 cm
 last_path_point_x = 0.0
 last_path_point_y = 0.0
@@ -158,9 +159,9 @@ while True:
     robot.load()
     #========================================================
 
-    #========================
-    # robot heading marker
-    #========================
+    #======================================
+    # robot heading and trailing markers
+    #======================================
     # robot's center on the screen
     cx = screen_x
     cy = screen_y
@@ -200,6 +201,15 @@ while True:
         last_path_point_x = world_x
         last_path_point_y = world_y
 
+        # saving the screen points too
+        path_on_screen.append((screen_x,screen_y))
+
+    #====== GREEN TRAIL =======
+    # the actual path taken by the robot
+    if len(path_on_screen) > 1:
+        for point in path_on_screen:
+            canvas.draw_circle(center=point,radius=1,color=(0,255,100))
+
     #==========
     # KEY STROKES
     #==========
@@ -221,6 +231,11 @@ while True:
         #canvas.draw_line(start=(canvas.wwidth//2,canvas.wheight//2),end=(screen_x,screen_y),color="black",width=1)
         # drawing a dotted line instead of a straight line
         canvas.draw_dotted_line(start=(canvas.wwidth//2,canvas.wheight//2), end=(screen_x,screen_y), color="gray", width=1)
+    elif canvas.s_key_pressed:  # when space key is pressed save path
+        import json
+        with open("saved_trail.json","w") as f:
+            json.dump(path_points, f)
+        print(f"Saved {len(path_points)} path points to saved_trail.json")
 
     # encoder data
     canvas.draw_text(text="Encoder Data",font_size=16,color=(0,0,0),xpos=1155,ypos=15)

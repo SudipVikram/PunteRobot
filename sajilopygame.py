@@ -44,6 +44,7 @@ class sajilopygame:
         self.plus_key_pressed = False
         self.d_key_pressed = False
         self.t_key_pressed = False
+        self.l_key_pressed = False
 
         # Mappings
         self.is_lr_mapped_to_player = False
@@ -149,6 +150,8 @@ class sajilopygame:
                     self.d_key_pressed = True
                 if event.key == pygame.K_t:
                     self.t_key_pressed = True
+                if event.key == pygame.K_l:
+                    self.l_key_pressed = True
 
             # Upon key release
             if event.type == pygame.KEYUP:
@@ -180,6 +183,8 @@ class sajilopygame:
                     self.d_key_pressed = False
                 if event.key == pygame.K_t:
                     self.t_key_pressed = False
+                if event.key == pygame.K_l:
+                    self.l_key_pressed = False
 
         # Update player position based on the key press state
         if self.is_lr_mapped_to_player:

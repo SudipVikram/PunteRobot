@@ -55,6 +55,7 @@ path_on_screen = []     # list of (screen_x, world_y) in pixels
 MIN_DISTANCE_BETWEEN_POINTS = 0.03  # 3 cm
 last_path_point_x = 0.0
 last_path_point_y = 0.0
+live_trail_flag = False
 
 while True:
     # canvas background
@@ -225,17 +226,22 @@ while True:
         #canvas.draw_line(start=(canvas.wwidth//2,canvas.wheight//2),end=(screen_x,screen_y),color="black",width=1)
         # drawing a dotted line instead of a straight line
         canvas.draw_dotted_line(start=(canvas.wwidth//2,canvas.wheight//2), end=(screen_x,screen_y), color="gray", width=1)
-    elif canvas.t_key_pressed:      # activate the green trail
+    elif canvas.t_key_pressed or live_trail_flag:      # activate the green trail
         #====== GREEN TRAIL =======
         # the actual path taken by the robot
         if len(path_on_screen) > 1:
             for point in path_on_screen:
                 canvas.draw_circle(center=point,radius=1,color=(0,255,100))
+    elif canvas.l_key_pressed:
+        if live_trail_flag:
+            live_trail_flag = False
+        else:
+            live_trail_flag = True
     elif canvas.s_key_pressed:  # when space key is pressed save path
-        import json
+        '''import json
         with open("saved_trail.json","w") as f:
             json.dump(path_points, f)
-        print(f"Saved {len(path_points)} path points to saved_trail.json")
+        print(f"Saved {len(path_points)} path points to saved_trail.json")'''
 
     # encoder data
     canvas.draw_text(text="Encoder Data",font_size=16,color=(0,0,0),xpos=1155,ypos=15)

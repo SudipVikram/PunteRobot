@@ -26,7 +26,6 @@ robot = canvas.character(parent=canvas,type="shape",character_shape="rectangle",
                          color="red",org=(0,canvas.wheight),width=robot_world_width,height=robot_world_height,
                          border_thickness=0,border_radius=0)
 
-
 #========= ODOMETRY SETUP ==========
 # world coordinates
 world_x = 0.0   # meters (right = positive)
@@ -150,6 +149,26 @@ while True:
     # loading the robot
     robot.load()
     #========================================================
+
+    #========================
+    # robot heading marker
+    #========================
+    # robot's center on the screen
+    cx = screen_x
+    cy = screen_y
+
+    # distance to the marker from robot center(offset)
+    front_offset = 12
+
+    # convert heading to radians
+    angle = math.radians(-heading)
+
+    # point in front of the robot
+    front_x = cx + front_offset * math.cos(angle)
+    front_y = cy + front_offset * math.sin(angle)
+
+    # drawing a small circle as a marker
+    canvas.draw_circle(color=(0,0,0), center=(front_x,front_y), radius=5)
 
     #====================
     # Heading and Distance Calculation

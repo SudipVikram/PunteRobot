@@ -1049,6 +1049,15 @@ class sajilopygame:
         stop_angle = math.radians(stop_angle)   # for anti-clockwise start_angle must be smaller than stop_angle
         pygame.draw.arc(self.screen, color=color, rect=rect, start_angle=start_angle, stop_angle=stop_angle, width=border_thickness)
 
+    # draw a circle
+    def draw_circle(self, color=(255, 255, 255), center=(0, 0), radius=10, border_thickness=0):
+        ''' Draw a circle.
+        color : fill/outline color
+        center           : (x, y) center of the circle
+        radius           : radius in pixels
+        border_thickness : 0 = filled, >0 = outline thickness'''
+        pygame.draw.circle(self.screen, color, center, radius, border_thickness)
+
     # drawing a polygon
     def draw_polygon(self,color=(255,255,255),points=None,border_thickness=0):
         if points is None:

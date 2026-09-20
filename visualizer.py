@@ -47,6 +47,14 @@ prev_right = 0
 distance_travelled = 0.0
 straight_distance = 0.0
 
+#=================
+# PATH TRACKING
+#=================
+path_points = []    # list of (world_x, world_y) in meters
+MIN_DISTANCE_BETWEEN_POINTS = 0.03  # 3 cm
+last_path_point_x = 0.0
+last_path_point_y = 0.0
+
 while True:
     # canvas background
     canvas.background_color("white")
@@ -158,7 +166,7 @@ while True:
     cy = screen_y
 
     # distance to the marker from robot center(offset)
-    front_offset = 12
+    front_offset = 8
 
     # convert heading to radians
     angle = math.radians(-heading)
@@ -168,7 +176,7 @@ while True:
     front_y = cy + front_offset * math.sin(angle)
 
     # drawing a small circle as a marker
-    canvas.draw_circle(color=(0,0,0), center=(front_x,front_y), radius=5)
+    canvas.draw_circle(color=(0,0,0), center=(front_x,front_y), radius=2)
 
     #====================
     # Heading and Distance Calculation
@@ -185,6 +193,12 @@ while True:
 
     straight_distance = math.sqrt(world_x**2 + world_y**2)
 
+    #================ PATH RECORDING ==================
+    # record points only if the robot has moved enough
+    if math.hypot(world_x-last_path_point_x, world_y-last_path_point_y) >= MIN_DISTANCE_BETWEEN_POINTS:
+        path_points.append((world_x,world_y))
+        last_path_point_x = world_x
+        last_path_point_y = world_y
 
     #==========
     # KEY STROKES

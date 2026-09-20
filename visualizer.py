@@ -204,12 +204,6 @@ while True:
         # saving the screen points too
         path_on_screen.append((screen_x,screen_y))
 
-    #====== GREEN TRAIL =======
-    # the actual path taken by the robot
-    if len(path_on_screen) > 1:
-        for point in path_on_screen:
-            canvas.draw_circle(center=point,radius=1,color=(0,255,100))
-
     #==========
     # KEY STROKES
     #==========
@@ -231,6 +225,12 @@ while True:
         #canvas.draw_line(start=(canvas.wwidth//2,canvas.wheight//2),end=(screen_x,screen_y),color="black",width=1)
         # drawing a dotted line instead of a straight line
         canvas.draw_dotted_line(start=(canvas.wwidth//2,canvas.wheight//2), end=(screen_x,screen_y), color="gray", width=1)
+    elif canvas.t_key_pressed:      # activate the green trail
+        #====== GREEN TRAIL =======
+        # the actual path taken by the robot
+        if len(path_on_screen) > 1:
+            for point in path_on_screen:
+                canvas.draw_circle(center=point,radius=1,color=(0,255,100))
     elif canvas.s_key_pressed:  # when space key is pressed save path
         import json
         with open("saved_trail.json","w") as f:

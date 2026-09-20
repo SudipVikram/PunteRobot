@@ -213,6 +213,11 @@ while True:
     canvas.draw_text(text=f"From Start: {straight_distance:.2f}m",font_size=16,color=(84, 84, 84),xpos=1155,ypos=275)
     canvas.draw_text(text=f"Heading: {int(heading)}°",font_size=16,color=(84, 84, 84),xpos=1155,ypos=295)
 
+    # placeholder for cheat sheet
+    canvas.draw_rect(color="lightgray",org=(275,700),width=800,height=70,border_thickness=0,border_radius=10)
+    canvas.draw_text(text="Commands:",font_size=16,color=(0,0,0),xpos=280,ypos=705)
+    canvas.draw_text(text="Distance -> d",font_size=16,color=(84,84,84),xpos=370,ypos=705)
+
     # sending command to esp32(punte)
     odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))
 

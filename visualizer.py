@@ -185,7 +185,9 @@ while True:
     elif canvas.plus_key_pressed:   # increase motor speed by 5
         current_cmd = "+"
     elif canvas.d_key_pressed:      # draws a line from origin to center of robot
-        canvas.draw_line(start=(canvas.wwidth//2,canvas.wheight//2),end=(screen_x,screen_y),color="black",width=1)
+        #canvas.draw_line(start=(canvas.wwidth//2,canvas.wheight//2),end=(screen_x,screen_y),color="black",width=1)
+        # drawing a dotted line instead of a straight line
+        canvas.draw_dotted_line(start=(canvas.wwidth//2,canvas.wheight//2), end=(screen_x,screen_y), color="gray", width=1)
 
     # encoder data
     canvas.draw_text(text="Encoder Data",font_size=16,color=(0,0,0),xpos=1155,ypos=15)

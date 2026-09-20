@@ -1005,6 +1005,37 @@ class sajilopygame:
     def draw_line(self,start=(0,0),end=(0,0),color=(255,255,255),width=1):
         pygame.draw.line(self.screen, color, start, end, width)
 
+    # drawing a dotted line
+    def draw_dotted_line(self, start=(0,0), end=(0,0), color="black", width=1, dash_length=8, gap_length=6):
+        x1, y1 = start
+        x2, y2 = end
+
+        dx = x2 - x1
+        dy = y2 - y1
+        length = math.sqrt(dx*dx + dy*dy)
+
+        if length == 0:
+            return
+
+        # Unit direction
+        ux = dx / length
+        uy = dy / length
+
+        drawn = 0
+        while drawn < length:
+            # start of this dash
+            sx = x1 + ux * drawn
+            sy = y1 + uy * drawn
+
+            # end of this dash
+            dash_end = min(drawn + dash_length, length)
+            ex = x1 + ux * dash_end
+            ey = y1 + uy * dash_end
+
+            self.draw_line(start=(sx, sy), end=(ex, ey), color=color, width=width)
+
+            drawn += dash_length + gap_length
+
     # drawing a rect
     def draw_rect(self,color=(255,255,255),org=(50,50),width=100,height=100,border_thickness=0,border_radius=0):
         xpos, ypos = org

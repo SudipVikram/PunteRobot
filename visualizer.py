@@ -237,11 +237,11 @@ while True:
             live_trail_flag = False
         else:
             live_trail_flag = True
-    if canvas.s_key_pressed:  # when space key is pressed save path
-        '''import json
+    if canvas.s_key_pressed:  # when s key is pressed save path
+        import json
         with open("saved_trail.json","w") as f:
             json.dump(path_points, f)
-        print(f"Saved {len(path_points)} path points to saved_trail.json")'''
+        print(f"Saved {len(path_points)} path points to saved_trail.json")
 
     # encoder data
     canvas.draw_text(text="Encoder Data",font_size=16,color=(0,0,0),xpos=1155,ypos=15)

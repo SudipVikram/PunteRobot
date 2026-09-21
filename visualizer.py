@@ -212,32 +212,32 @@ while True:
 
     if canvas.left_pressed:
         current_cmd = "L"
-    elif canvas.right_pressed:
+    if canvas.right_pressed:
         current_cmd = "R"
-    elif canvas.up_pressed:
+    if canvas.up_pressed:
         current_cmd = "F"
-    elif canvas.down_pressed:
+    if canvas.down_pressed:
         current_cmd = "B"
-    elif canvas.minus_key_pressed:  # slow motor speed by 5
+    if canvas.minus_key_pressed:  # slow motor speed by 5
         current_cmd = "-"
-    elif canvas.plus_key_pressed:   # increase motor speed by 5
+    if canvas.plus_key_pressed:   # increase motor speed by 5
         current_cmd = "+"
-    elif canvas.d_key_pressed:      # draws a line from origin to center of robot
+    if canvas.d_key_pressed:      # draws a line from origin to center of robot
         #canvas.draw_line(start=(canvas.wwidth//2,canvas.wheight//2),end=(screen_x,screen_y),color="black",width=1)
         # drawing a dotted line instead of a straight line
         canvas.draw_dotted_line(start=(canvas.wwidth//2,canvas.wheight//2), end=(screen_x,screen_y), color="gray", width=1)
-    elif canvas.t_key_pressed or live_trail_flag:      # activate the green trail
+    if canvas.t_key_pressed or live_trail_flag:      # activate the green trail
         #====== GREEN TRAIL =======
         # the actual path taken by the robot
         if len(path_on_screen) > 1:
             for point in path_on_screen:
                 canvas.draw_circle(center=point,radius=1,color=(0,255,100))
-    elif canvas.l_key_pressed:
+    if canvas.l_key_pressed:
         if live_trail_flag:
             live_trail_flag = False
         else:
             live_trail_flag = True
-    elif canvas.s_key_pressed:  # when space key is pressed save path
+    if canvas.s_key_pressed:  # when space key is pressed save path
         '''import json
         with open("saved_trail.json","w") as f:
             json.dump(path_points, f)

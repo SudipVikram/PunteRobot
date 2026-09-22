@@ -50,12 +50,20 @@ straight_distance = 0.0
 #=================
 # PATH TRACKING
 #=================
-path_points = []    # list of (world_x, world_y) in meters
+path_points = []        # list of (world_x, world_y) in meters
 path_on_screen = []     # list of (screen_x, world_y) in pixels
 MIN_DISTANCE_BETWEEN_POINTS = 0.03  # 3 cm
 last_path_point_x = 0.0
 last_path_point_y = 0.0
 live_trail_flag = False
+
+
+#=====================
+# WAYPOINT FOLLOWING
+#=====================
+saved_path = []             # holds path points of loaded path from file
+is_following = False        # flag that tells that the robot is in following mode
+current_target_index = 0    # next point in the path the robot is heading towards
 
 while True:
     # canvas background
@@ -226,6 +234,7 @@ while True:
         #canvas.draw_line(start=(canvas.wwidth//2,canvas.wheight//2),end=(screen_x,screen_y),color="black",width=1)
         # drawing a dotted line instead of a straight line
         canvas.draw_dotted_line(start=(canvas.wwidth//2,canvas.wheight//2), end=(screen_x,screen_y), color="gray", width=1)
+        current_cmd = "d"
     if canvas.t_key_pressed or live_trail_flag:      # activate the green trail
         #====== GREEN TRAIL =======
         # the actual path taken by the robot
@@ -235,13 +244,76 @@ while True:
     if canvas.l_key_pressed:
         if live_trail_flag:
             live_trail_flag = False
+            current_cmd = "t"
         else:
             live_trail_flag = True
+            current_cmd = "l"
     if canvas.s_key_pressed:  # when s key is pressed save path
+        current_cmd = "s"
         import json
         with open("saved_trail.json","w") as f:
             json.dump(path_points, f)
         print(f"Saved {len(path_points)} path points to saved_trail.json")
+
+    #==============
+    # waypoint line following
+    if canvas.b_key_pressed:
+        try:
+            import json
+            with open("saved_trail.json", "r") as f:
+                saved_path = json.load(f)
+                print(f"Loaded {len(saved_path)} path points from saved_trail.json")
+
+            is_following = True
+            current_target_index = 0
+        except:
+            print("Couldn't load saved_trail.json")
+
+    # drawing the path in blue
+    if saved_path:
+        for i in range(1, len(saved_path)):
+            # getting the real world points into screen coordinates
+            x1 = 675 + int(saved_path[i-1][0] * scale)
+            y1 = 375 - int(saved_path[i-1][1] * scale)
+            canvas.draw_circle(color=(0,0,255),center=(x1,y1),radius=1)
+
+    #===== Line Following/Path Following logic ======
+    if is_following and saved_path:
+        target_x, target_y = saved_path[current_target_index]
+
+        # vector from robot to target
+        dx = target_x - world_x
+        dy = target_y - world_y
+
+        # distance to target
+        distance_to_target = math.hypot(dx,dy)
+
+        # desired heading to face the target
+        desired_heading = math.degrees(math.atan2(dy,dx))
+
+        # heading error
+        error = (desired_heading - heading + 180) % 360 - 180   # shortest angle
+
+        # deciding the command based on heading error
+        TURN_THRESHOLD = 15     # degrees - can tune this value for accuracy
+
+        if abs(error) < TURN_THRESHOLD:
+            current_cmd = "F"   # go forward if it is facing roughly the right way
+        elif error > 0:
+            current_cmd = "L"   # need to turn left
+        else:
+            current_cmd = "R"   # need to turn right
+
+        # check if the robot reached the current target
+        if distance_to_target < 0.08:       # within 8cm(Can be tuned)\
+            current_target_index += 1
+            if current_target_index >= len(saved_path):
+                is_following = False        # we assume the target has been reached
+                current_cmd = "s"           # last hop is a stop
+                print("Path Following Completed!")
+            else:
+                current_cmd = "s"
+
 
     # encoder data
     canvas.draw_text(text="Encoder Data",font_size=16,color=(0,0,0),xpos=1155,ypos=15)
@@ -275,6 +347,7 @@ while True:
     canvas.draw_text(text="Distance -> d",font_size=16,color=(84,84,84),xpos=370,ypos=705)
     canvas.draw_text(text="Travel trail -> t", font_size=16,color=(84,84,84),xpos=480,ypos=705)
     canvas.draw_text(text="Live trail -> l", font_size=16,color=(84,84,84),xpos=610,ypos=705)
+    canvas.draw_text(text="Save path -> s", font_size=16,color=(84,84,84),xpos=720,ypos=705)
 
     # sending command to esp32(punte)
     odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))

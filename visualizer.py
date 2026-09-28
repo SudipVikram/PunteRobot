@@ -248,6 +248,13 @@ while True:
         else:
             live_trail_flag = True
             current_cmd = "l"
+    if canvas.mouse_clicked:
+        world_x_clicked = (canvas.mouse_x - 675) / scale
+        world_y_clicked = (375-canvas.mouse_y) / scale
+
+        path_on_screen.append((canvas.mouse_x,canvas.mouse_y))
+        path_points.append((world_x_clicked,world_y_clicked))
+
     if canvas.s_key_pressed:  # when s key is pressed save path
         current_cmd = "s"
         import json

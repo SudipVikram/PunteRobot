@@ -295,7 +295,7 @@ while True:
         error = (desired_heading - heading + 180) % 360 - 180   # shortest angle
 
         # deciding the command based on heading error
-        TURN_THRESHOLD = 15     # degrees - can tune this value for accuracy
+        TURN_THRESHOLD = 10     # degrees - can tune this value for accuracy
 
         if abs(error) < TURN_THRESHOLD:
             current_cmd = "F"   # go forward if it is facing roughly the right way
@@ -305,7 +305,7 @@ while True:
             current_cmd = "R"   # need to turn right
 
         # check if the robot reached the current target
-        if distance_to_target < 0.08:       # within 8cm(Can be tuned)\
+        if distance_to_target < 0.03:       # within 3cm(Can be tuned)
             current_target_index += 1
             if current_target_index >= len(saved_path):
                 is_following = False        # we assume the target has been reached

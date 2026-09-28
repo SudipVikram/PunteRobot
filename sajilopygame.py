@@ -103,6 +103,12 @@ class sajilopygame:
         # files
         self.HIGH_SCORE_FILE = "high_score.txt"
 
+        # mouse, newly added
+        self.mouse_clicked = False
+        self.right_mouse_clicked = False
+        self.mouse_x = 0
+        self.mouse_y = 0
+
     # function to update the display window
     # also is responsible for quitting the program
     def refresh_window(self):
@@ -152,6 +158,14 @@ class sajilopygame:
                     self.t_key_pressed = True
                 if event.key == pygame.K_l:
                     self.l_key_pressed = True
+            # upon mouse press, newly added
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:   # left click
+                    self.mouse_clicked = True
+                    self.mouse_x, self.mouse_y = event.pos
+                if event.button == 3:   # right click
+                    self.right_mouse_clicked = True
+                    self.mouse_x, self.mouse_y = event.pos
 
             # Upon key release
             if event.type == pygame.KEYUP:
@@ -185,6 +199,10 @@ class sajilopygame:
                     self.t_key_pressed = False
                 if event.key == pygame.K_l:
                     self.l_key_pressed = False
+            # upon mouse release, newly added
+            if event.type == pygame.MOUSEBUTTONUP:
+                self.mouse_clicked = False
+                self.right_mouse_clicked = False
 
         # Update player position based on the key press state
         if self.is_lr_mapped_to_player:

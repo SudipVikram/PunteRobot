@@ -68,7 +68,8 @@ current_target_index = 0    # next point in the path the robot is heading toward
 #===============
 # WALL
 #===============
-walls = []  # list of ((x1,y1),(x2,y2))                # holds collection of coordinates for a wall
+walls = []          # list of ((x1,y1),(x2,y2))  # holds collection of coordinates for a wall
+is_wall = False     # flag to check if the wall object has been constructed        
 
 while True:
     # canvas background
@@ -267,7 +268,8 @@ while True:
             json.dump(path_points, f)
         print(f"Saved {len(path_points)} path points to saved_trail.json")
 
-    # when w key is pressed save wall points
+    #======== wall =======
+    # when w key is pressed, we save the wall points
     if canvas.w_key_pressed and len(path_points) >= 2:
         current_cmd = "w"
         for i in range(len(path_points) - 1):
@@ -280,6 +282,20 @@ while True:
             json.dump(walls, w, indent=2)
 
         print(f"{len(walls)} Wall coordinates saved to walls.json")
+
+    # when o key is pressed, the walls are constructed as objects
+    if canvas.o_key_pressed and len(path_points) >= 2:
+        current_cmd = "o"
+        is_wall = not is_wall   # toggle
+
+    if is_wall:
+        for (x1,y1), (x2,y2) in walls:
+            sx1 = 675 + int(x1 * scale)
+            sy1 = 375 - int(y1 * scale)
+            sx2 = 675 + int(x2 * scale)
+            sy2 = 375 - int(y2 * scale)
+            canvas.draw_line(start=(sx1,sy1), end=(sx2,sy2), color=(0,0,0), width=2)
+
 
     #==========================
     # waypoint line following

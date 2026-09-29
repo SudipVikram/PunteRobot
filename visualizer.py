@@ -18,10 +18,10 @@ odometry_data = serialData.ucontroller(serialData,port='COM7',baudrate=115200,ti
 canvas.window_title("Odometry Visualizer")
 
 # robot character
-# actual width of the robot{l: 0.1m, b: 0.1m}
-# since 1m = 150px, in visualizer l = 0.1*150 = 15px, b = 0.1*150 = 15px
-robot_world_width = 15
-robot_world_height = 15
+# actual width of the robot{l: 0.105m (10.5 cm), b: 0.11m (11 cm)}
+# since 1m = 150px, in visualizer l = 0.105*150 = 15.75px, b = 0.11*150 = 16.5px
+robot_world_width = 15.75
+robot_world_height = 16.5
 robot = canvas.character(parent=canvas,type="shape",character_shape="rectangle",
                          color="red",org=(0,canvas.wheight),width=robot_world_width,height=robot_world_height,
                          border_thickness=0,border_radius=0)
@@ -36,7 +36,7 @@ heading = 90.0  # degrees (90 = facing up)
 # ticks per meter - 6552 (single channel)
 # constants
 TICKS_PER_METER = 6552 # for a single channel encoder
-WHEEL_BASE = 0.118       # wheel to wheel distance = 118mm = 0.118m
+WHEEL_BASE = 0.11  # 11 cms  # wheel to wheel distance = 110mm = 0.11m
 
 # previous encoder values
 prev_left = 0
@@ -57,13 +57,18 @@ last_path_point_x = 0.0
 last_path_point_y = 0.0
 live_trail_flag = False
 
-
 #=====================
 # WAYPOINT FOLLOWING
 #=====================
 saved_path = []             # holds path points of loaded path from file
 is_following = False        # flag that tells that the robot is in following mode
 current_target_index = 0    # next point in the path the robot is heading towards
+
+
+#===============
+# WALL
+#===============
+walls = []  # list of ((x1,y1),(x2,y2))                # holds collection of coordinates for a wall
 
 while True:
     # canvas background
@@ -78,9 +83,9 @@ while True:
     # crosshair in the origin
     canvas.draw_text(text="+",font_size=20,color="blue",xpos=(canvas.wwidth//2)-3,ypos=(canvas.wheight//2)-17)
 
-    #=========
+    #=================
     # ODOMETRY DATA
-    #=========
+    #=================
     # placeholder for odometry data
     canvas.draw_rect(color="cyan",org=(1150,10),width=150,height=75,border_thickness=0,border_radius=10)
 
@@ -213,9 +218,9 @@ while True:
         # saving the screen points too
         path_on_screen.append((screen_x,screen_y))
 
-    #==========
+    #===============
     # KEY STROKES
-    #==========
+    #===============
     current_cmd = "S"   # stopping is the default command unless another key is pressed
 
     if canvas.left_pressed:
@@ -240,7 +245,7 @@ while True:
         # the actual path taken by the robot
         if len(path_on_screen) > 1:
             for point in path_on_screen:
-                canvas.draw_circle(center=point,radius=1,color=(0,255,100))
+                canvas.draw_circle(center=point,radius=2,color=(0,255,100))
     if canvas.l_key_pressed:
         if live_trail_flag:
             live_trail_flag = False
@@ -248,7 +253,7 @@ while True:
         else:
             live_trail_flag = True
             current_cmd = "l"
-    if canvas.mouse_clicked:
+    if canvas.mouse_clicked: # on mouse click we will save the point as path point
         world_x_clicked = (canvas.mouse_x - 675) / scale
         world_y_clicked = (375-canvas.mouse_y) / scale
 
@@ -262,7 +267,21 @@ while True:
             json.dump(path_points, f)
         print(f"Saved {len(path_points)} path points to saved_trail.json")
 
-    #==============
+    # when w key is pressed save wall points
+    if canvas.w_key_pressed and len(path_points) >= 2:
+        current_cmd = "w"
+        for i in range(len(path_points) - 1):
+            p1 = list(path_points[i])
+            p2 = list(path_points[i+1])
+            walls.append([p1,p2])
+
+        import json
+        with open("walls.json","w") as w:
+            json.dump(walls, w, indent=2)
+
+        print(f"{len(walls)} Wall coordinates saved to walls.json")
+
+    #==========================
     # waypoint line following
     if canvas.b_key_pressed:
         try:
@@ -282,7 +301,7 @@ while True:
             # getting the real world points into screen coordinates
             x1 = 675 + int(saved_path[i-1][0] * scale)
             y1 = 375 - int(saved_path[i-1][1] * scale)
-            canvas.draw_circle(color=(0,0,255),center=(x1,y1),radius=1)
+            canvas.draw_circle(color=(0,0,255),center=(x1,y1),radius=2)
 
     #===== Line Following/Path Following logic ======
     if is_following and saved_path:

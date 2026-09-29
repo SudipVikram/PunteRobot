@@ -45,6 +45,8 @@ class sajilopygame:
         self.d_key_pressed = False
         self.t_key_pressed = False
         self.l_key_pressed = False
+        self.w_key_pressed = False
+        self.o_key_pressed = False
 
         # Mappings
         self.is_lr_mapped_to_player = False
@@ -158,6 +160,10 @@ class sajilopygame:
                     self.t_key_pressed = True
                 if event.key == pygame.K_l:
                     self.l_key_pressed = True
+                if event.key == pygame.K_w:
+                    self.w_key_pressed = True
+                if event.key == pygame.K_o:
+                    self.o_key_pressed = True
             # upon mouse press, newly added
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:   # left click
@@ -199,6 +205,10 @@ class sajilopygame:
                     self.t_key_pressed = False
                 if event.key == pygame.K_l:
                     self.l_key_pressed = False
+                if event.key == pygame.K_w:
+                    self.w_key_pressed = False
+                if event.key == pygame.K_o:
+                    self.o_key_pressed = False
             # upon mouse release, newly added
             if event.type == pygame.MOUSEBUTTONUP:
                 self.mouse_clicked = False

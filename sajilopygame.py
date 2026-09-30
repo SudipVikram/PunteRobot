@@ -1246,6 +1246,32 @@ class sajilopygame:
             # Draw the rotated rectangle
             self.parent.draw_polygon(color=color, points=rotated, border_thickness=border_thickness)
 
+        # function to find the corners of the robot
+        def get_robot_corners(self, cx, cy, heading_deg, length, width):
+            angle = math.radians(heading_deg)
+            cos_a = math.cos(angle)
+            sin_a = math.sin(angle)
+
+            # half sizes
+            hl = length/2
+            hw = width/2
+
+            # local corners relative to center(before rotation)
+            local = [
+                (hl, hw)    # front-right
+                (hl, -hw)   # front-left
+                (-hl, -hw)  # rear-left
+                (-hl, hw)   # rear-right
+            ]
+
+            corners = []
+            for x,y in local:
+                # rotate then translate
+                wx = cx + x * cos_a - y * sin_a
+                wy = cy + x * sin_a - y * cos_a
+                corners.append((wx,wy))
+            return corners
+
         def update_shape(self, width=None, height=None):
             self.check_vitals()
             if width is not None:

@@ -1258,10 +1258,10 @@ class sajilopygame:
 
             # local corners relative to center(before rotation)
             local = [
-                (hl, hw)    # front-right
-                (hl, -hw)   # front-left
-                (-hl, -hw)  # rear-left
-                (-hl, hw)   # rear-right
+                (hl, hw),    # front-right
+                (hl, -hw),   # front-left
+                (-hl, -hw),  # rear-left
+                (-hl, hw),     # rear-right
             ]
 
             corners = []

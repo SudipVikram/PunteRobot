@@ -71,6 +71,14 @@ current_target_index = 0    # next point in the path the robot is heading toward
 walls = []          # list of ((x1,y1),(x2,y2))  # holds collection of coordinates for a wall
 is_wall = False     # flag to check if the wall object has been constructed        
 
+#=====================================
+# MISSION PLANNING FOR PATH A TO B
+#=====================================
+mission_file = "mission.json"  # file to save the mission plan
+start_point = None             # (x,y) in meters
+goal_point = None              # (x,y) in meters
+planned_path = []              # list of (x,y) in meters for the computed path
+
 while True:
     # canvas background
     canvas.background_color("white")

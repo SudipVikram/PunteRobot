@@ -472,6 +472,10 @@ while True:
     canvas.draw_text(text="Travel trail -> t", font_size=16,color=(84,84,84),xpos=480,ypos=705)
     canvas.draw_text(text="Live trail -> l", font_size=16,color=(84,84,84),xpos=610,ypos=705)
     canvas.draw_text(text="Save path -> s", font_size=16,color=(84,84,84),xpos=720,ypos=705)
+    canvas.draw_text(text="Save wall -> w", font_size=16,color=(84,84,84),xpos=835,ypos=705)
+    canvas.draw_text(text="Load wall -> o", font_size=16,color=(84,84,84),xpos=950,ypos=705)
+    canvas.draw_text(text="Save mission -> m", font_size=16,color=(84,84,84),xpos=285,ypos=725)
+    canvas.draw_text(text="Plan mission -> p", font_size=16,color=(84,84,84),xpos=435,ypos=725)
 
     # sending command to esp32(punte)
     odometry_data.send_serial_data_unobstructed((current_cmd + "\n").encode("ascii"))

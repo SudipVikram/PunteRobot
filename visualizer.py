@@ -78,6 +78,8 @@ mission_file = "mission.json"  # file to save the mission plan
 start_point = None             # (x,y) in meters
 goal_point = None              # (x,y) in meters
 planned_path = []              # list of (x,y) in meters for the computed path
+mission = []                   # list of ((x1,y1),(x2,y2))  # holds collection of coordinates for a mission path
+is_mission = False             # the mission flag
 
 while True:
     # canvas background
@@ -292,9 +294,19 @@ while True:
         print(f"{len(walls)} Wall coordinates saved to walls.json")
 
     # when o key is pressed, the walls are constructed as objects
-    if canvas.o_key_pressed and len(path_points) >= 2:
+    if canvas.o_key_pressed:
         current_cmd = "o"
         is_wall = not is_wall   # toggle
+
+        try:
+            import json
+            with open("walls.json", "r") as f:
+                walls = json.load(f)
+                print(f"Loaded {len(walls)} wall coordinates from walls.json")
+        except:
+            print("Couldn't load walls.json")
+
+        canvas.o_key_pressed = False  # reset the flag
 
     if is_wall:
         for (x1,y1), (x2,y2) in walls:
@@ -303,6 +315,68 @@ while True:
             sx2 = 675 + int(x2 * scale)
             sy2 = 375 - int(y2 * scale)
             canvas.draw_line(start=(sx1,sy1), end=(sx2,sy2), color=(0,0,0), width=2)
+
+    #====================================
+    # MISSION PLANNING FROM PATH A TO B
+    #====================================
+    # we must know that everytime a left click happens, the coordinates automatically get saved as a start point
+    if canvas.mouse_clicked: # on mouse click we will save the point as start point
+        wx = (canvas.mouse_x - 675) / scale
+        wy = (375-canvas.mouse_y) / scale
+        start_point = (wx,wy)
+        print(f"Start point set at: {start_point}")
+        canvas.mouse_clicked = False  # reset the flag
+
+    if canvas.right_mouse_clicked: # on right mouse click we will save the point as goal point
+        wx = (canvas.mouse_x - 675) / scale
+        wy = (375-canvas.mouse_y) / scale
+        goal_point = (wx,wy)
+        print(f"Goal point set at: {goal_point}")
+        canvas.right_mouse_clicked = False  # reset the flag
+
+    if canvas.m_key_pressed and start_point and goal_point:  # when m key is pressed, the mission path is saved
+        current_cmd = "m"
+        is_mission = not is_mission   # toggle
+
+        import json
+        data = {
+            "start": list(start_point),
+            "goal": list(goal_point),
+            "path": []
+        }
+        with open(mission_file, "w") as f:
+            json.dump(data, f, indent=2)
+
+        print(f"Mission data saved to {mission_file}")
+        canvas.m_key_pressed = False  # reset the flag
+
+    # upon pressing "p", we load the mission data 
+    # and plan the path
+    if canvas.p_key_pressed:
+        current_cmd = "p"
+        try:
+            import json
+            with open("mission.json", "r") as f:
+                mission_data = json.load(f)
+                start_point = tuple(mission_data["start"])
+                goal_point = tuple(mission_data["goal"])
+                planned_path = mission_data["path"]
+                is_mission = True
+                print(f"Loaded mission data from mission.json")
+        except:
+            print("Couldn't load mission.json")
+
+        canvas.p_key_pressed = False  # reset the flag
+
+    if is_mission:
+        # drawing the start point
+        sx = 675 + int(start_point[0] * scale)
+        sy = 375 - int(start_point[1] * scale)
+        canvas.draw_circle(color=(0, 200, 0), center=(sx, sy), radius=6)    # green
+        # drawing the goal point
+        gx = 675 + int(goal_point[0] * scale)
+        gy = 375 - int(goal_point[1] * scale)
+        canvas.draw_circle(color=(200, 0, 0), center=(gx, gy), radius=6)    # red
 
 
     #==========================
